@@ -124,13 +124,13 @@ JWT_EXPIRES_IN=24h
 
 ```bash
 # Gerar migração inicial (primeira vez)
-npm run migration:generate -- -n InitialMigration
+npm run migration:generate src/migrations/InitialMigration
 
 # Executar migrações no banco
 npm run migration:run
 
 # Verificar se as tabelas foram criadas
-psql -U app_user -d alocacao_turmas -c "\dt"
+psql -U joaovitorvogelvieira -d alocacao_turmas -c "\dt"
 ```
 
 ### 4. Popular banco com dados iniciais
@@ -407,10 +407,10 @@ npm install --save-dev @types/bcryptjs
 #### ❌ Erro: "Migration not found"
 ```bash
 # Gerar nova migração
-npm run migration:generate -- -n NomeDaMigracao
+npm run migration:generate src/migrations/NomeDaMigracao
 
 # Verificar migrações pendentes
-npm run typeorm -- migration:show
+npm run typeorm -- migration:show -d src/config/database.ts
 ```
 
 #### ❌ Porta já está em uso
