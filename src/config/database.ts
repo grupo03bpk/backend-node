@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { User, Curso, Turma, Sala, ConfiguracaoSala, Previsao } from '../entities';
 

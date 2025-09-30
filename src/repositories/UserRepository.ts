@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../config/database';
+import  AppDataSource  from '../config/database';
 import { User } from '../entities';
 
 export class UserRepository {

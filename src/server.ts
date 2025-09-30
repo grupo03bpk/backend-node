@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import app from './app';
-import { AppDataSource } from './config/database';
+import  AppDataSource  from './config/database';
 
 // Carregar variáveis de ambiente
 config();
