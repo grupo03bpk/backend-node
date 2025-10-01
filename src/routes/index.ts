@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import authRoutes from './auth';
 import userRoutes from './users';
-// import cursoRoutes from './cursos';
+import cursoRoutes from './cursos';
 // import turmaRoutes from './turmas';
 // import salaRoutes from './salas';
 // import configuracaoSalaRoutes from './configuracoes-sala';
@@ -12,7 +12,7 @@ const router = Router();
 // Definir todas as rotas da aplicação
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
-// router.use('/cursos', cursoRoutes);
+router.use('/cursos', cursoRoutes);
 // router.use('/turmas', turmaRoutes);
 // router.use('/salas', salaRoutes);
 // router.use('/configuracoes-sala', configuracaoSalaRoutes);
