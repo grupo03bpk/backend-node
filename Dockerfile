@@ -8,6 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies: if INSTALL_DEV=true install devDependencies (for ts-node), otherwise install only production deps
+# Install small utilities we need (bash for consistent scripting and pg_isready for readiness checks)
+RUN apk add --no-cache bash postgresql-client || true
 RUN if [ "$INSTALL_DEV" = "true" ]; then npm ci; else npm ci --only=production; fi
 
 # Copy source

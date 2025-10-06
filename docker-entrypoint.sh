@@ -1,6 +1,27 @@
 #!/bin/sh
 set -e
 
+# Wait for DB to be ready using pg_isready if available
+wait_for_db() {
+	if command -v pg_isready >/dev/null 2>&1; then
+		echo "Waiting for Postgres to be ready..."
+		retries=0
+		until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USERNAME:-postgres}" >/dev/null 2>&1; do
+			retries=$((retries+1))
+			if [ $retries -ge 30 ]; then
+				echo "Postgres did not become ready in time" >&2
+				return 1
+			fi
+			sleep 1
+		done
+		echo "Postgres is ready"
+	else
+		echo "pg_isready not available; skipping DB ready check"
+	fi
+}
+
+wait_for_db || true
+
 # Decide migration strategy:
 # - If compiled migrations exist in dist, run node script
 # - Else, if ts-node is available (dev image), run ts-node script
