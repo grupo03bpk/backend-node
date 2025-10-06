@@ -9,6 +9,15 @@ async function run() {
     await AppDataSource.initialize();
     console.log('Connected to DB');
 
+    // Ensure migrations table exists (safe for fresh DBs)
+    await AppDataSource.query(`
+      CREATE TABLE IF NOT EXISTS migrations (
+        id serial PRIMARY KEY,
+        timestamp bigint NOT NULL,
+        name varchar NOT NULL
+      )
+    `);
+
     // Load applied migrations from DB
     const appliedRows: Array<{ name: string }> = await AppDataSource.query(`SELECT name FROM migrations`);
     const applied = new Set(appliedRows.map(r => r.name));
