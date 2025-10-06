@@ -1,5 +1,9 @@
+import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { ConfiguracaoSala, Curso, Previsao, Sala, Turma, User } from '../entities';
+
+// Load environment variables from .env when this module is imported.
+config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
