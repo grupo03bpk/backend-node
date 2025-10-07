@@ -22,7 +22,9 @@ export class Curso {
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
   evasao: number; // percentual médio de evasão
 
-  @OneToMany(() => Turma, (turma) => turma.curso)
+  @OneToMany(() => Turma, (turma) => turma.curso, {
+    cascade: true, // Permite criar/atualizar/remover turmas junto com o curso
+  })
   turmas: Turma[];
 
   @CreateDateColumn()
