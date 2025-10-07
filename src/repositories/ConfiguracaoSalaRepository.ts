@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../config/database';
+import  AppDataSource  from '../config/database';
 import { ConfiguracaoSala, TipoSalaEnum } from '../entities';
 
 export class ConfiguracaoSalaRepository {

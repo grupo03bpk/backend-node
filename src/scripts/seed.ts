@@ -1,4 +1,4 @@
-import { AppDataSource } from '../config/database';
+import  AppDataSource  from '../config/database';
 import { User, UserPerfil, Curso, TurnoEnum, TipoSalaEnum } from '../entities';
 import { UserRepository, CursoRepository, SalaRepository, TurmaRepository, ConfiguracaoSalaRepository } from '../repositories';
 
