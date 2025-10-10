@@ -93,7 +93,10 @@ export class ConfiguracaoSalaRepository {
       where: { tipo, ano, semestre },
       relations: ['sala'],
       order: {
-        area_m2: 'DESC',
+        sala: {
+          bloco: 'ASC',
+          numero: 'ASC',
+        },
       },
     });
   }
@@ -103,9 +106,8 @@ export class ConfiguracaoSalaRepository {
       .createQueryBuilder('config')
       .select([
         'config.tipo as tipo',
+        'config.tamanho as tamanho',
         'COUNT(config.id) as quantidade',
-        'AVG(config.area_m2) as areaMedia',
-        'SUM(config.area_m2) as areaTotal',
       ])
       .where('config.ano = :ano AND config.semestre = :semestre', { ano, semestre })
       .groupBy('config.tipo')
