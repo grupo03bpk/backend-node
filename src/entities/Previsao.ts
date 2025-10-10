@@ -28,7 +28,7 @@ export class Previsao {
   semestre: number;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
-  taxaOcupacao: number; // percentual de ocupação da sala
+  taxaOcupacao: number;
 
   @Column({ type: 'text', nullable: true })
   observacoes: string;
@@ -47,25 +47,37 @@ export class Previsao {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Método para calcular se a sala comporta a turma
+  private getCapacidadeEstimada(): number {
+    if (!this.configuracaoSala) return 0;
+    
+    // Capacidade estimada baseada no tamanho e tipo da sala
+    const capacidadesPorTamanho = {
+      'P': { lab: 20, aula: 30 },
+      'M': { lab: 30, aula: 50 },
+      'G': { lab: 40, aula: 80 }
+    };
+
+    const tipo = this.configuracaoSala.tipo as 'lab' | 'aula';
+    return capacidadesPorTamanho[this.configuracaoSala.tamanho][tipo];
+  }
+
   isAlocacaoViavel(): boolean {
     if (!this.configuracaoSala || !this.turma) {
       return false;
     }
 
-    const capacidadeSala = this.configuracaoSala.getCapacidade();
+    const capacidadeSala = this.getCapacidadeEstimada();
     const quantidadeAlunos = this.turma.quantidadeAlunos;
 
     return quantidadeAlunos <= capacidadeSala;
   }
 
-  // Método para calcular a taxa de ocupação real
   calcularTaxaOcupacao(): number {
     if (!this.configuracaoSala || !this.turma) {
       return 0;
     }
 
-    const capacidadeSala = this.configuracaoSala.getCapacidade();
+    const capacidadeSala = this.getCapacidadeEstimada();
     const quantidadeAlunos = this.turma.quantidadeAlunos;
 
     return Math.round((quantidadeAlunos / capacidadeSala) * 100 * 100) / 100; // 2 casas decimais
