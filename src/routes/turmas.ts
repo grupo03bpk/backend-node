@@ -86,6 +86,12 @@ router.get('/:id', TurmaController.validateId, turmaController.getTurmaById);
  *                 type: integer
  *               ano:
  *                 type: integer
+ *           example:
+ *             cursoId: 5
+ *             turno: "manha"
+ *             periodoAtual: 1
+ *             quantidadeAlunos: 40
+ *             ano: 2026
  *     responses:
  *       201:
  *         description: Turma criada com sucesso
