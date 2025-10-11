@@ -1,5 +1,5 @@
-import  AppDataSource  from '../config/database';
-import { User, UserPerfil, Curso, TurnoEnum, TipoSalaEnum } from '../entities';
+import AppDataSource from '../config/database';
+import { User, UserPerfil, Curso, TurnoEnum, TipoSalaEnum, TamanhoSalaEnum } from '../entities';
 import { UserRepository, CursoRepository, SalaRepository, TurmaRepository, ConfiguracaoSalaRepository } from '../repositories';
 
 async function seed() {
@@ -87,16 +87,16 @@ async function seed() {
 
     console.log('⚙️ Criando configurações de sala...');
     const configuracoes = [
-      { salaId: salasCreated[0].id, ano: 2024, semestre: 1, area_m2: 50, tipo: TipoSalaEnum.M },
-      { salaId: salasCreated[1].id, ano: 2024, semestre: 1, area_m2: 45, tipo: TipoSalaEnum.P },
-      { salaId: salasCreated[2].id, ano: 2024, semestre: 1, area_m2: 60, tipo: TipoSalaEnum.G },
-      { salaId: salasCreated[3].id, ano: 2024, semestre: 1, area_m2: 55, tipo: TipoSalaEnum.M },
-      { salaId: salasCreated[4].id, ano: 2024, semestre: 1, area_m2: 65, tipo: TipoSalaEnum.G },
-      { salaId: salasCreated[5].id, ano: 2024, semestre: 1, area_m2: 48, tipo: TipoSalaEnum.M },
-      { salaId: salasCreated[6].id, ano: 2024, semestre: 1, area_m2: 42, tipo: TipoSalaEnum.P },
-      { salaId: salasCreated[7].id, ano: 2024, semestre: 1, area_m2: 58, tipo: TipoSalaEnum.G },
-      { salaId: salasCreated[8].id, ano: 2024, semestre: 1, area_m2: 80, tipo: TipoSalaEnum.LAB },
-      { salaId: salasCreated[9].id, ano: 2024, semestre: 1, area_m2: 75, tipo: TipoSalaEnum.LAB },
+      { salaId: salasCreated[0].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.M, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[1].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.P, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[2].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.G, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[3].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.M, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[4].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.G, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[5].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.M, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[6].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.P, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[7].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.G, tipo: TipoSalaEnum.AULA },
+      { salaId: salasCreated[8].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.G, tipo: TipoSalaEnum.LAB },
+      { salaId: salasCreated[9].id, ano: 2024, semestre: 1, tamanho: TamanhoSalaEnum.G, tipo: TipoSalaEnum.LAB },
     ];
 
     for (const configData of configuracoes) {
