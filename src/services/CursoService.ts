@@ -1,25 +1,31 @@
-import { CursoRepository } from '../repositories';
 import { Curso } from '../entities';
 import { AppError } from '../middlewares';
-import { HTTP_STATUS, ERROR_MESSAGES, VALIDATION_RULES } from '../utils/constants';
+import { CursoRepository } from '../repositories';
+import { HTTP_STATUS, VALIDATION_RULES } from '../utils/constants';
 
 export interface CreateCursoData {
   nome: string;
   duracao: number;
-  evasao: number;
-}
-
-export interface UpdateCursoData {
-  nome?: string;
-  duracao?: number;
   evasao?: number;
 }
 
 export class CursoService {
+  // Métodos compatíveis com os testes automatizados
+  async findAll() {
+    return this.getAllCursos();
+  }
+
+  async findById(id: number) {
+    return this.getCursoById(id);
+  }
+
+  async create(data: CreateCursoData) {
+    return this.createCurso(data);
+  }
   private cursoRepository: CursoRepository;
 
-  constructor() {
-    this.cursoRepository = new CursoRepository();
+  constructor(cursoRepository?: CursoRepository) {
+    this.cursoRepository = cursoRepository ?? new CursoRepository();
   }
 
   async getAllCursos(): Promise<Curso[]> {
@@ -42,10 +48,14 @@ export class CursoService {
       throw new AppError('Curso com este nome já existe', HTTP_STATUS.CONFLICT);
     }
 
-    return this.cursoRepository.create(cursoData);
+    return this.cursoRepository.create({
+      nome: cursoData.nome,
+      duracao: cursoData.duracao,
+      evasao: cursoData.evasao ?? 0,
+    });
   }
 
-  async updateCurso(id: number, cursoData: UpdateCursoData): Promise<Curso> {
+  async updateCurso(id: number, cursoData: Partial<CreateCursoData>): Promise<Curso> {
     await this.getCursoById(id);
 
     if (cursoData.nome) {
@@ -74,27 +84,32 @@ export class CursoService {
 
   async deleteCurso(id: number): Promise<void> {
     await this.getCursoById(id);
-    
     const deleted = await this.cursoRepository.delete(id);
     if (!deleted) {
       throw new AppError('Erro ao deletar curso', HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async getCursosWithPagination(page: number = 1, limit: number = 10): Promise<{
+  async getCursosWithPagination(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
     cursos: Curso[];
     total: number;
     totalPages: number;
     currentPage: number;
   }> {
     const [cursos, total] = await this.cursoRepository.findWithPagination(page, limit);
-    
     return {
       cursos,
       total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
     };
+  }
+
+  async findCursosComEstatisticas() {
+    return this.cursoRepository.findCursosComEstatisticas();
   }
 
   private validateCursoData(cursoData: CreateCursoData): void {
@@ -118,21 +133,15 @@ export class CursoService {
     }
   }
 
-  private validateDuracao(duracao: number): void {
+  private validateDuracao(duracao: number | undefined): void {
     if (duracao === undefined || duracao <= 0) {
-      throw new AppError(
-        'Duração deve ser um número positivo',
-        HTTP_STATUS.BAD_REQUEST
-      );
+      throw new AppError('Duração deve ser um número positivo', HTTP_STATUS.BAD_REQUEST);
     }
   }
 
-  private validateEvasao(evasao: number): void {
-    if (evasao === undefined || evasao < 0 || evasao > 100) {
-      throw new AppError(
-        'Evasão deve ser um número entre 0 e 100',
-        HTTP_STATUS.BAD_REQUEST
-      );
+  private validateEvasao(evasao: number | undefined): void {
+    if (evasao !== undefined && (evasao < 0 || evasao > 100)) {
+      throw new AppError('Evasão deve ser um número entre 0 e 100', HTTP_STATUS.BAD_REQUEST);
     }
   }
 }

@@ -1,7 +1,7 @@
-import { ConfiguracaoSalaRepository } from '../repositories';
 import { ConfiguracaoSala, TamanhoSalaEnum, TipoSalaEnum } from '../entities';
 import { AppError } from '../middlewares';
-import { HTTP_STATUS, ERROR_MESSAGES, VALIDATION_RULES } from '../utils/constants';
+import { ConfiguracaoSalaRepository } from '../repositories';
+import { HTTP_STATUS } from '../utils/constants';
 
 export interface CreateConfiguracaoSalaData {
   salaId: number;
@@ -22,8 +22,22 @@ export interface UpdateConfiguracaoSalaData {
 export class ConfiguracaoSalaService {
   private configuracaoSalaRepository: ConfiguracaoSalaRepository;
 
-  constructor() {
-    this.configuracaoSalaRepository = new ConfiguracaoSalaRepository();
+  constructor(configuracaoSalaRepository?: ConfiguracaoSalaRepository) {
+    this.configuracaoSalaRepository =
+      configuracaoSalaRepository ?? new ConfiguracaoSalaRepository();
+  }
+
+  // Métodos compatíveis com os testes automatizados
+  async findAll() {
+    return this.getAllConfiguracoesSala();
+  }
+
+  async findById(id: number) {
+    return this.getConfiguracaoSalaById(id);
+  }
+
+  async create(data: CreateConfiguracaoSalaData) {
+    return this.createConfiguracaoSala(data);
   }
 
   async getAllConfiguracoesSala(): Promise<ConfiguracaoSala[]> {
@@ -31,7 +45,10 @@ export class ConfiguracaoSalaService {
   }
 
   async getConfiguracoesSalaWithPagination(page: number, limit: number) {
-    const [configuracoesSala, total] = await this.configuracaoSalaRepository.findWithPagination(page, limit);
+    const [configuracoesSala, total] = await this.configuracaoSalaRepository.findWithPagination(
+      page,
+      limit
+    );
     return {
       configuracoesSala,
       total,
@@ -55,7 +72,9 @@ export class ConfiguracaoSalaService {
     return this.configuracaoSalaRepository.findByAnoSemestre(ano, semestre);
   }
 
-  async createConfiguracaoSala(configuracaoData: CreateConfiguracaoSalaData): Promise<ConfiguracaoSala> {
+  async createConfiguracaoSala(
+    configuracaoData: CreateConfiguracaoSalaData
+  ): Promise<ConfiguracaoSala> {
     this.validateConfiguracaoSalaData(configuracaoData);
 
     // Verificar se já existe configuração para a mesma sala, ano e semestre
@@ -66,13 +85,19 @@ export class ConfiguracaoSalaService {
     );
 
     if (existingConfiguracao) {
-      throw new AppError('Já existe configuração para esta sala neste período', HTTP_STATUS.CONFLICT);
+      throw new AppError(
+        'Já existe configuração para esta sala neste período',
+        HTTP_STATUS.CONFLICT
+      );
     }
 
     return this.configuracaoSalaRepository.create(configuracaoData);
   }
 
-  async updateConfiguracaoSala(id: number, configuracaoData: UpdateConfiguracaoSalaData): Promise<ConfiguracaoSala> {
+  async updateConfiguracaoSala(
+    id: number,
+    configuracaoData: UpdateConfiguracaoSalaData
+  ): Promise<ConfiguracaoSala> {
     await this.getConfiguracaoSalaById(id);
 
     // Se está atualizando sala, ano ou semestre, verificar conflitos
@@ -89,30 +114,42 @@ export class ConfiguracaoSalaService {
       );
 
       if (existingConfiguracao && existingConfiguracao.id !== id) {
-        throw new AppError('Já existe configuração para esta sala neste período', HTTP_STATUS.CONFLICT);
+        throw new AppError(
+          'Já existe configuração para esta sala neste período',
+          HTTP_STATUS.CONFLICT
+        );
       }
     }
 
     this.validateConfiguracaoSalaData(configuracaoData, true);
     const updatedConfiguracao = await this.configuracaoSalaRepository.update(id, configuracaoData);
     if (!updatedConfiguracao) {
-      throw new AppError('Erro ao atualizar configuração de sala', HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      throw new AppError(
+        'Erro ao atualizar configuração de sala',
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
     }
     return updatedConfiguracao;
   }
 
   async deleteConfiguracaoSala(id: number): Promise<void> {
     const configuracao = await this.getConfiguracaoSalaById(id);
-    
+
     // Verificar se a configuração tem previsões associadas
     if (configuracao.previsoes && configuracao.previsoes.length > 0) {
-      throw new AppError('Não é possível deletar configuração com previsões associadas', HTTP_STATUS.BAD_REQUEST);
+      throw new AppError(
+        'Não é possível deletar configuração com previsões associadas',
+        HTTP_STATUS.BAD_REQUEST
+      );
     }
 
     await this.configuracaoSalaRepository.delete(id);
   }
 
-  private validateConfiguracaoSalaData(configuracaoData: Partial<CreateConfiguracaoSalaData>, isUpdate = false): void {
+  private validateConfiguracaoSalaData(
+    configuracaoData: Partial<CreateConfiguracaoSalaData>,
+    isUpdate = false
+  ): void {
     if (!isUpdate) {
       if (!configuracaoData.salaId) {
         throw new AppError('ID da sala é obrigatório', HTTP_STATUS.BAD_REQUEST);
@@ -133,18 +170,31 @@ export class ConfiguracaoSalaService {
 
     if (configuracaoData.salaId !== undefined) {
       if (!Number.isInteger(configuracaoData.salaId) || configuracaoData.salaId <= 0) {
-        throw new AppError('ID da sala deve ser um número inteiro positivo', HTTP_STATUS.BAD_REQUEST);
+        throw new AppError(
+          'ID da sala deve ser um número inteiro positivo',
+          HTTP_STATUS.BAD_REQUEST
+        );
       }
     }
 
     if (configuracaoData.ano !== undefined) {
-      if (!Number.isInteger(configuracaoData.ano) || configuracaoData.ano < 2000 || configuracaoData.ano > 2100) {
-        throw new AppError('Ano deve ser um número inteiro entre 2000 e 2100', HTTP_STATUS.BAD_REQUEST);
+      if (
+        !Number.isInteger(configuracaoData.ano) ||
+        configuracaoData.ano < 2000 ||
+        configuracaoData.ano > 2100
+      ) {
+        throw new AppError(
+          'Ano deve ser um número inteiro entre 2000 e 2100',
+          HTTP_STATUS.BAD_REQUEST
+        );
       }
     }
 
     if (configuracaoData.semestre !== undefined) {
-      if (!Number.isInteger(configuracaoData.semestre) || ![1, 2].includes(configuracaoData.semestre)) {
+      if (
+        !Number.isInteger(configuracaoData.semestre) ||
+        ![1, 2].includes(configuracaoData.semestre)
+      ) {
         throw new AppError('Semestre deve ser 1 ou 2', HTTP_STATUS.BAD_REQUEST);
       }
     }

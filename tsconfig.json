@@ -16,7 +16,7 @@
     "strictPropertyInitialization": false,
     "moduleResolution": "node",
     "typeRoots": ["./node_modules/@types"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
