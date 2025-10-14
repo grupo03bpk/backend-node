@@ -2,6 +2,7 @@ import { Curso } from '../entities';
 import { AppError } from '../middlewares';
 import { CursoRepository } from '../repositories';
 import { HTTP_STATUS, VALIDATION_RULES } from '../utils/constants';
+import { CursoValidator } from '../validators/CursoValidator';
 
 export interface CreateCursoData {
   nome: string;
@@ -41,7 +42,9 @@ export class CursoService {
   }
 
   async createCurso(cursoData: CreateCursoData): Promise<Curso> {
-    this.validateCursoData(cursoData);
+  CursoValidator.validateNome(cursoData.nome);
+  CursoValidator.validateDuracao(cursoData.duracao);
+  CursoValidator.validateEvasao(cursoData.evasao);
 
     const existingCurso = await this.cursoRepository.findByNome(cursoData.nome);
     if (existingCurso) {
@@ -63,15 +66,15 @@ export class CursoService {
       if (existingCurso && existingCurso.id !== id) {
         throw new AppError('Curso com este nome já existe', HTTP_STATUS.CONFLICT);
       }
-      this.validateNome(cursoData.nome);
+      CursoValidator.validateNome(cursoData.nome);
     }
 
     if (cursoData.duracao) {
-      this.validateDuracao(cursoData.duracao);
+      CursoValidator.validateDuracao(cursoData.duracao);
     }
 
     if (cursoData.evasao) {
-      this.validateEvasao(cursoData.evasao);
+      CursoValidator.validateEvasao(cursoData.evasao);
     }
 
     const updatedCurso = await this.cursoRepository.update(id, cursoData);
@@ -112,36 +115,5 @@ export class CursoService {
     return this.cursoRepository.findCursosComEstatisticas();
   }
 
-  private validateCursoData(cursoData: CreateCursoData): void {
-    this.validateNome(cursoData.nome);
-    this.validateDuracao(cursoData.duracao);
-    this.validateEvasao(cursoData.evasao);
-  }
-
-  private validateNome(nome: string): void {
-    if (!nome || nome.trim().length < VALIDATION_RULES.NOME_MIN_LENGTH) {
-      throw new AppError(
-        `Nome deve ter pelo menos ${VALIDATION_RULES.NOME_MIN_LENGTH} caracteres`,
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
-    if (nome.length > VALIDATION_RULES.NOME_MAX_LENGTH) {
-      throw new AppError(
-        `Nome deve ter no máximo ${VALIDATION_RULES.NOME_MAX_LENGTH} caracteres`,
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
-  }
-
-  private validateDuracao(duracao: number | undefined): void {
-    if (duracao === undefined || duracao <= 0) {
-      throw new AppError('Duração deve ser um número positivo', HTTP_STATUS.BAD_REQUEST);
-    }
-  }
-
-  private validateEvasao(evasao: number | undefined): void {
-    if (evasao !== undefined && (evasao < 0 || evasao > 100)) {
-      throw new AppError('Evasão deve ser um número entre 0 e 100', HTTP_STATUS.BAD_REQUEST);
-    }
-  }
+  // Validações extraídas para CursoValidator
 }

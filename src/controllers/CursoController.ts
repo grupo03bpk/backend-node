@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { CursoService } from '../services/CursoService';
+import { CursoRepository } from '../repositories';
 import { sendSuccess, sendError, sendPaginatedResponse, HTTP_STATUS } from '../utils';
 import { AuthenticatedRequest, validateRequired, validateId } from '../middlewares';
 
@@ -7,7 +8,7 @@ export class CursoController {
   private cursoService: CursoService;
 
   constructor() {
-    this.cursoService = new CursoService();
+    this.cursoService = new CursoService(new CursoRepository());
   }
 
   getAllCursos = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
