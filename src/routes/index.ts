@@ -1,11 +1,11 @@
+import configuracaoSalaRoutes from './configuracoes-sala';
+import cursoRoutes from './cursos';
+import salaRoutes from './salas';
+import turmaRoutes from './turmas';
+// import previsaoRoutes from './previsoes';
 import { Router } from 'express';
 import authRoutes from './auth';
 import userRoutes from './users';
-import cursoRoutes from './cursos';
-import turmaRoutes from './turmas';
-import salaRoutes from './salas';
-import configuracaoSalaRoutes from './configuracoes-sala';
-// import previsaoRoutes from './previsoes';
 
 const router = Router();
 

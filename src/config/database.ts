@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-import { User, Curso, Turma, Sala, ConfiguracaoSala, Previsao } from '../entities';
+import { ConfiguracaoSala, Curso, Previsao, Sala, Turma, User } from '../entities';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,8 +12,11 @@ const AppDataSource = new DataSource({
   synchronize: process.env.NODE_ENV === 'development',
   logging: process.env.NODE_ENV === 'development',
   entities: [User, Curso, Turma, Sala, ConfiguracaoSala, Previsao],
-  migrations: ['src/migrations/*.ts'],
-  subscribers: ['src/subscribers/*.ts'],
+  migrations:
+    process.env.NODE_ENV === 'development' ? ['src/migrations/*.ts'] : ['dist/migrations/*.js'],
+  subscribers:
+    process.env.NODE_ENV === 'development' ? ['src/subscribers/*.ts'] : ['dist/subscribers/*.js'],
 });
 
+export { AppDataSource };
 export default AppDataSource;

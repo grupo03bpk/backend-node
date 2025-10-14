@@ -1,7 +1,7 @@
-import { SalaRepository } from '../repositories';
 import { Sala } from '../entities';
 import { AppError } from '../middlewares';
-import { HTTP_STATUS, ERROR_MESSAGES, VALIDATION_RULES } from '../utils/constants';
+import { SalaRepository } from '../repositories';
+import { HTTP_STATUS } from '../utils/constants';
 
 export interface CreateSalaData {
   numero: string;
@@ -16,8 +16,21 @@ export interface UpdateSalaData {
 export class SalaService {
   private salaRepository: SalaRepository;
 
-  constructor() {
-    this.salaRepository = new SalaRepository();
+  constructor(salaRepository?: SalaRepository) {
+    this.salaRepository = salaRepository ?? new SalaRepository();
+  }
+
+  // Métodos compatíveis com os testes automatizados
+  async findAll() {
+    return this.getAllSalas();
+  }
+
+  async findById(id: number) {
+    return this.getSalaById(id);
+  }
+
+  async create(data: CreateSalaData) {
+    return this.createSala(data);
   }
 
   async getAllSalas(): Promise<Sala[]> {
@@ -44,7 +57,10 @@ export class SalaService {
   async createSala(salaData: CreateSalaData): Promise<Sala> {
     this.validateSalaData(salaData);
 
-    const existingSala = await this.salaRepository.findByNumeroBloco(salaData.numero, salaData.bloco);
+    const existingSala = await this.salaRepository.findByNumeroBloco(
+      salaData.numero,
+      salaData.bloco
+    );
     if (existingSala) {
       throw new AppError('Sala com este número e bloco já existe', HTTP_STATUS.CONFLICT);
     }
@@ -56,7 +72,10 @@ export class SalaService {
     await this.getSalaById(id);
 
     if (salaData.numero && salaData.bloco) {
-      const existingSala = await this.salaRepository.findByNumeroBloco(salaData.numero, salaData.bloco);
+      const existingSala = await this.salaRepository.findByNumeroBloco(
+        salaData.numero,
+        salaData.bloco
+      );
       if (existingSala && existingSala.id !== id) {
         throw new AppError('Sala com este número e bloco já existe', HTTP_STATUS.CONFLICT);
       }
@@ -72,10 +91,13 @@ export class SalaService {
 
   async deleteSala(id: number): Promise<void> {
     const sala = await this.getSalaById(id);
-    
+
     // Verificar se a sala tem configurações associadas
     if (sala.configuracoes && sala.configuracoes.length > 0) {
-      throw new AppError('Não é possível deletar sala com configurações associadas', HTTP_STATUS.BAD_REQUEST);
+      throw new AppError(
+        'Não é possível deletar sala com configurações associadas',
+        HTTP_STATUS.BAD_REQUEST
+      );
     }
 
     await this.salaRepository.delete(id);
@@ -96,7 +118,10 @@ export class SalaService {
         throw new AppError('Número da sala deve ser uma string válida', HTTP_STATUS.BAD_REQUEST);
       }
       if (salaData.numero.length > 20) {
-        throw new AppError('Número da sala deve ter no máximo 20 caracteres', HTTP_STATUS.BAD_REQUEST);
+        throw new AppError(
+          'Número da sala deve ter no máximo 20 caracteres',
+          HTTP_STATUS.BAD_REQUEST
+        );
       }
     }
 

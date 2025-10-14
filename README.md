@@ -16,31 +16,37 @@ Backend completo para gerenciamento dinâmico de alocação de salas em uma facu
 ## 📋 Funcionalidades
 
 ### 🔐 Autenticação e Autorização
+
 - Sistema de login com JWT
 - Perfis de usuário (Admin, Coordenador)
 - Middleware de autenticação
 
 ### 📚 Gestão de Cursos
+
 - CRUD completo de cursos
 - Controle de duração e taxa de evasão
 - Relacionamento com turmas
 
 ### 🎓 Gestão de Turmas
+
 - CRUD de turmas por curso
 - Controle de turnos (Manhã, Tarde, Noite)
 - Acompanhamento de quantidade de alunos
 
 ### 🏢 Gestão de Salas
+
 - CRUD de salas por bloco
 - Configurações dinâmicas por período
 - Tipos de sala (Pequena, Média, Grande, Laboratório)
 
 ### ⚙️ Configurações Dinâmicas
+
 - Configurações de sala por ano/semestre
 - Mudanças de área e tipo ao longo do tempo
 - Histórico de configurações
 
 ### 📊 Relatórios e Previsões
+
 - Cálculo de capacidade de salas
 - Previsões de ocupação
 - Relatórios de estatísticas
@@ -49,11 +55,13 @@ Backend completo para gerenciamento dinâmico de alocação de salas em uma facu
 ## 🛠️ Instalação
 
 ### Pré-requisitos
+
 - Node.js 18+
 - PostgreSQL 12+
 - npm ou yarn
 
 ### 1. Clone e instale dependências
+
 ```bash
 git clone <repository-url>
 cd backend
@@ -65,12 +73,14 @@ npm install
 #### 2.1. Instalar PostgreSQL (se não tiver)
 
 **macOS (Homebrew):**
+
 ```bash
 brew install postgresql
 brew services start postgresql
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install postgresql postgresql-contrib
@@ -78,6 +88,7 @@ sudo systemctl start postgresql
 ```
 
 **Windows:**
+
 - Baixe e instale do site oficial: https://www.postgresql.org/download/
 
 #### 2.2. Criar banco de dados
@@ -101,6 +112,7 @@ cp .env.example .env
 ```
 
 Configure o arquivo `.env`:
+
 ```env
 # Servidor
 PORT=3000
@@ -141,6 +153,7 @@ npm run seed
 ```
 
 **O que o seed cria:**
+
 - 2 usuários (admin e coordenador)
 - 4 cursos de exemplo
 - 10 salas em diferentes blocos
@@ -162,6 +175,7 @@ npm start
 ```
 
 **Saída esperada:**
+
 ```
 🚀 Servidor rodando na porta 3000
 📚 Documentação disponível em: http://localhost:3000/api-docs
@@ -171,6 +185,7 @@ npm start
 ## 📖 Documentação da API
 
 Após iniciar o servidor, acesse:
+
 - **Swagger UI**: http://localhost:3000/api-docs
 - **JSON Schema**: http://localhost:3000/api-docs.json
 - **Health Check**: http://localhost:3000/api/health
@@ -178,6 +193,7 @@ Após iniciar o servidor, acesse:
 ### Exemplos de Uso
 
 #### 🔐 Fazer Login
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -199,12 +215,14 @@ curl -X POST http://localhost:3000/api/auth/login \
 ```
 
 #### 👤 Listar Usuários (com token)
+
 ```bash
 curl -X GET http://localhost:3000/api/users \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
 ```
 
 #### 📚 Criar Curso
+
 ```bash
 curl -X POST http://localhost:3000/api/cursos \
   -H "Content-Type: application/json" \
@@ -217,6 +235,7 @@ curl -X POST http://localhost:3000/api/cursos \
 ```
 
 #### 🏢 Buscar Salas com Filtros
+
 ```bash
 curl -X GET "http://localhost:3000/api/salas?bloco=A&page=1&limit=5" \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
@@ -225,12 +244,14 @@ curl -X GET "http://localhost:3000/api/salas?bloco=A&page=1&limit=5" \
 ### Endpoints Principais
 
 #### 🔐 Autenticação
+
 ```
 POST /api/auth/login - Login do usuário
 POST /api/auth/register - Registro (apenas admin)
 ```
 
 #### 👤 Usuários
+
 ```
 GET    /api/users - Listar usuários
 POST   /api/users - Criar usuário
@@ -240,6 +261,7 @@ DELETE /api/users/:id - Deletar usuário
 ```
 
 #### 📚 Cursos
+
 ```
 GET    /api/cursos - Listar cursos
 POST   /api/cursos - Criar curso
@@ -250,6 +272,7 @@ GET    /api/cursos/:id/estatisticas - Estatísticas do curso
 ```
 
 #### 🎓 Turmas
+
 ```
 GET    /api/turmas - Listar turmas
 POST   /api/turmas - Criar turma
@@ -259,6 +282,7 @@ DELETE /api/turmas/:id - Deletar turma
 ```
 
 #### 🏢 Salas
+
 ```
 GET    /api/salas - Listar salas
 POST   /api/salas - Criar sala
@@ -269,6 +293,7 @@ GET    /api/salas/relatorio-ocupacao - Relatório de ocupação
 ```
 
 #### ⚙️ Configurações
+
 ```
 GET    /api/configuracoes - Listar configurações
 POST   /api/configuracoes - Criar configuração
@@ -278,6 +303,7 @@ DELETE /api/configuracoes/:id - Deletar configuração
 ```
 
 #### 📊 Previsões
+
 ```
 GET    /api/previsoes - Listar previsões
 POST   /api/previsoes - Criar previsão
@@ -302,7 +328,7 @@ npm run test:watch
 
 ## 🔧 Scripts Disponíveis
 
-```bash
+````bash
 npm run dev          # Iniciar servidor em modo desenvolvimento
 npm run build        # Compilar TypeScript
 npm start            # Iniciar servidor em produção
@@ -313,25 +339,61 @@ npm run seed         # Popular banco com dados iniciais
 npm test             # Executar testes
 npm run lint         # Verificar código com ESLint
 npm run format       # Formatar código com Prettier
+
+## 🐳 Docker - rodando com docker-compose
+
+Você pode rodar o banco e a aplicação via Docker Compose. Existem dois modos:
+
+1. Modo desenvolvimento (dev inside container)
+
+  - instala devDependencies (ts-node) e executa as migrations via TypeScript.
+  - útil se você quer depurar dentro do container.
+
+  Exemplo (modo dev):
+
+  ```bash
+  # defina no .env: INSTALL_DEV=true
+  docker-compose up --build
+````
+
+2. Modo produção/CI
+
+- instala apenas dependências de produção e usa as migrations compiladas (JS) geradas pelo `npm run build`.
+- recomendado para produção.
+
+Exemplo (modo prod):
+
+```bash
+# defina no .env: INSTALL_DEV=false
+docker-compose up --build
+```
+
+Observações:
+
+- O entrypoint tenta executar migrations compiladas em `dist/` (`node dist/scripts/runMigrations.js`). Se não encontrar, e se `ts-node` estiver disponível (INSTALL_DEV=true), usará `ts-node src/scripts/runMigrations.ts`.
+- No modo production é recomendado rodar `npm run build` antes do `docker-compose build` para garantir que `dist/` esteja presente.
+
 ```
 
 ## 🏗️ Estrutura do Projeto
 
 ```
+
 src/
-├── config/          # Configurações (database, swagger)
-├── controllers/     # Controladores HTTP
-├── entities/        # Entidades do banco (TypeORM)
-├── middlewares/     # Middlewares (auth, error handling)
-├── repositories/    # Repositórios de dados
-├── routes/          # Definição de rotas
-├── scripts/         # Scripts utilitários (seed)
-├── services/        # Lógica de negócio
-├── types/           # Tipos TypeScript
-├── utils/           # Funções utilitárias
-├── app.ts           # Configuração do Express
-└── server.ts        # Servidor principal
-```
+├── config/ # Configurações (database, swagger)
+├── controllers/ # Controladores HTTP
+├── entities/ # Entidades do banco (TypeORM)
+├── middlewares/ # Middlewares (auth, error handling)
+├── repositories/ # Repositórios de dados
+├── routes/ # Definição de rotas
+├── scripts/ # Scripts utilitários (seed)
+├── services/ # Lógica de negócio
+├── types/ # Tipos TypeScript
+├── utils/ # Funções utilitárias
+├── app.ts # Configuração do Express
+└── server.ts # Servidor principal
+
+````
 
 ## 👥 Usuários Padrão (após seed)
 
@@ -385,19 +447,22 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 #### ❌ Erro: "Cannot find type definition file for 'bcryptjs'"
 ```bash
 npm install --save-dev @types/bcryptjs
-```
+````
 
 #### ❌ Erro de conexão com PostgreSQL
+
 1. Verifique se o PostgreSQL está rodando:
+
    ```bash
    # macOS
    brew services list | grep postgresql
-   
+
    # Linux
    sudo systemctl status postgresql
    ```
 
 2. Teste a conexão:
+
    ```bash
    psql -U app_user -d alocacao_turmas -h localhost
    ```
@@ -405,6 +470,7 @@ npm install --save-dev @types/bcryptjs
 3. Verifique as credenciais no `.env`
 
 #### ❌ Erro: "Migration not found"
+
 ```bash
 # Gerar nova migração
 npm run migration:generate src/migrations/NomeDaMigracao
@@ -414,6 +480,7 @@ npm run typeorm -- migration:show -d src/config/database.ts
 ```
 
 #### ❌ Porta já está em uso
+
 ```bash
 # Encontrar processo usando a porta
 lsof -ti:3000
@@ -426,6 +493,7 @@ PORT=3001
 ```
 
 #### ❌ Problemas com JWT
+
 - Certifique-se que `JWT_SECRET` tem pelo menos 32 caracteres
 - Gere um novo secret: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"`
 
@@ -445,6 +513,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 ## 📞 Suporte
 
 Para dúvidas ou problemas:
+
 1. Verifique a documentação da API em `/api-docs`
 2. Consulte os logs do servidor
 3. Verifique a seção de troubleshooting acima
