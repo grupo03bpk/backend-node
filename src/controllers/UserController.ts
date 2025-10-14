@@ -1,13 +1,14 @@
 import { Response } from 'express';
+import { AuthenticatedRequest, validateId, validateRequired } from '../middlewares';
+import { UserRepository } from '../repositories';
 import { UserService } from '../services';
-import { sendSuccess, sendError, sendPaginatedResponse, HTTP_STATUS } from '../utils';
-import { AuthenticatedRequest, validateRequired, validateId } from '../middlewares';
+import { HTTP_STATUS, sendError, sendPaginatedResponse, sendSuccess } from '../utils';
 
 export class UserController {
   private userService: UserService;
 
   constructor() {
-    this.userService = new UserService();
+    this.userService = new UserService(new UserRepository());
   }
 
   getAllUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
