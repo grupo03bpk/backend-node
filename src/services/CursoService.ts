@@ -1,7 +1,7 @@
 import { Curso } from '../entities';
 import { AppError } from '../middlewares';
 import { CursoRepository } from '../repositories';
-import { HTTP_STATUS, VALIDATION_RULES } from '../utils/constants';
+import { HTTP_STATUS } from '../utils/constants';
 import { CursoValidator } from '../validators/CursoValidator';
 
 export interface CreateCursoData {
@@ -42,9 +42,9 @@ export class CursoService {
   }
 
   async createCurso(cursoData: CreateCursoData): Promise<Curso> {
-  CursoValidator.validateNome(cursoData.nome);
-  CursoValidator.validateDuracao(cursoData.duracao);
-  CursoValidator.validateEvasao(cursoData.evasao);
+    CursoValidator.validateNome(cursoData.nome);
+    CursoValidator.validateDuracao(cursoData.duracao);
+    CursoValidator.validateEvasao(cursoData.evasao);
 
     const existingCurso = await this.cursoRepository.findByNome(cursoData.nome);
     if (existingCurso) {

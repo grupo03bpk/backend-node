@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { CursoService } from '../services/CursoService';
+import { AuthenticatedRequest, validateId, validateRequired } from '../middlewares';
 import { CursoRepository } from '../repositories';
-import { sendSuccess, sendError, sendPaginatedResponse, HTTP_STATUS } from '../utils';
-import { AuthenticatedRequest, validateRequired, validateId } from '../middlewares';
+import { CursoService } from '../services/CursoService';
+import { HTTP_STATUS, sendError, sendPaginatedResponse, sendSuccess } from '../utils';
 
 export class CursoController {
   private cursoService: CursoService;

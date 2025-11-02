@@ -37,7 +37,6 @@ router.use(authenticateToken);
  *           type: integer
  *           description: (Opcional) ID da turma existente para atualizá-la. Se omitido, uma nova turma será criada.
  *           example: 15
- *           example: 1
  *     CursoInput:
  *       type: object
  *       required:
