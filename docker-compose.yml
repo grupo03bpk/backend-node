@@ -2,39 +2,42 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_DATABASE:-alocacao_turmas}
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-alocacao_turmas}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   app:
     build:
       context: .
       args:
-        INSTALL_DEV: ${INSTALL_DEV:-false}
+        INSTALL_DEV: "true"
     depends_on:
-      - db
-    env_file:
-      - .env
+      db:
+        condition: service_healthy
+    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
+    command: ["npm", "start"]
     environment:
-      - NODE_ENV=production
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_DATABASE}
+      # Force internal service DNS name to avoid host env overriding to empty
+      DB_HOST: db
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      # App listen port inside the container (configurable)
+      PORT: ${APP_PORT:-3000}
+      # Public port exposed on the host (only used for logs/URLs)
+      PUBLIC_PORT: ${HOST_PORT:-3000}
+      SWAGGER_DISABLED: "false"
     ports:
-      - "3000:3000"
-    entrypoint: ["/bin/sh", "-c", "./docker-entrypoint.sh npm start"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
+      - "${HOST_PORT:-3000}:${APP_PORT:-3000}"
 
 volumes:
   db_data:

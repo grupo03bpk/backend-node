@@ -6,6 +6,7 @@ import  AppDataSource  from './config/database';
 config();
 
 const PORT = process.env.PORT || 3000;
+const PUBLIC_PORT = process.env.PUBLIC_PORT || PORT;
 
 async function startServer() {
   try {
@@ -16,9 +17,9 @@ async function startServer() {
 
     // Iniciar servidor
     const server = app.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando na porta ${PORT}`);
-      console.log(`📚 Documentação disponível em: http://localhost:${PORT}/api-docs`);
-      console.log(`🏥 Health check disponível em: http://localhost:${PORT}/api/health`);
+      console.log(`🚀 Servidor rodando na porta interna ${PORT}`);
+      console.log(`📚 Documentação disponível em: http://localhost:${PUBLIC_PORT}/api-docs`);
+      console.log(`🏥 Health check disponível em: http://localhost:${PUBLIC_PORT}/api/health`);
       console.log(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
     });
 

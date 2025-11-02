@@ -1,0 +1,54 @@
+# existing excludes
+node_modules
+dist
+coverage
+
+# package / lock files (keep package.json but ignore local lock if you prefer)
+# package-lock.json
+
+# vscode / editors / ide
+.vscode
+.idea
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# git
+.git
+
+# logs / temp
+npm-debug.log
+yarn-error.log
+*.log
+tmp
+.cache
+
+# env / secrets
+.env
+.env.*.local
+*.pem
+*.key
+
+# docker / compose
+docker-compose.override.yml
+docker-compose.*.yml
+
+# sync / cloud storage (OneDrive / Library paths)
+OneDrive/
+OneDrive - *
+Library/
+Library/**/*
+~$*
+
+# build / cache
+coverage
+dist
+node_modules/**
+
+# misc
+*.tgz
+node-repl-history
+
