@@ -22,6 +22,5 @@ export class AuthController {
     }
   };
 
-  // Middleware de validação para login
   static validateLogin = validateRequired(['username', 'senha']);
 }

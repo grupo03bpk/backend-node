@@ -50,7 +50,6 @@ export class Previsao {
   private getCapacidadeEstimada(): number {
     if (!this.configuracaoSala) return 0;
     
-    // Capacidade estimada baseada no tamanho e tipo da sala
     const capacidadesPorTamanho = {
       'P': { lab: 20, aula: 30 },
       'M': { lab: 30, aula: 50 },
@@ -80,6 +79,6 @@ export class Previsao {
     const capacidadeSala = this.getCapacidadeEstimada();
     const quantidadeAlunos = this.turma.quantidadeAlunos;
 
-    return Math.round((quantidadeAlunos / capacidadeSala) * 100 * 100) / 100; // 2 casas decimais
+    return Math.round((quantidadeAlunos / capacidadeSala) * 100 * 100) / 100;
   }
 }

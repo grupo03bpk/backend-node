@@ -51,7 +51,6 @@ class App {
     });
 
     if (process.env.SWAGGER_DISABLED === 'true') {
-      // Swagger disabled: expose minimal JSON only for observability
       this.app.get('/api-docs.json', (_req, res) => res.json(minimalSwaggerSpec));
     } else {
       try {
@@ -59,7 +58,6 @@ class App {
         this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
         this.app.get('/api-docs.json', (_req, res) => res.json(spec));
       } catch (e) {
-        // If anything slips through, still mount a minimal spec and note the degraded mode
         this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(minimalSwaggerSpec));
         this.app.get('/api-docs.json', (_req, res) => res.json(minimalSwaggerSpec));
       }

@@ -41,15 +41,10 @@ const apis =
 
 export function buildSwaggerSpec() {
   try {
-    // Load swagger-jsdoc dynamically to avoid module init failures crashing the process
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const swaggerJsdoc = require('swagger-jsdoc');
     const options = { definition, apis };
     return swaggerJsdoc(options);
   } catch (err) {
-    // Fallback: return minimal spec without parsed route annotations
-    // so the server doesn't crash if glob/minimatch has incompatibilities.
-    // eslint-disable-next-line no-console
     console.warn('Swagger initialization failed, serving minimal spec. Error:', err);
     return { ...definition, paths: {} } as any;
   }
