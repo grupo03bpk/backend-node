@@ -118,7 +118,7 @@ router.use(authenticateToken);
 
 /**
  * @swagger
- * /api/configuracoes-sala:
+ * /configuracoes-sala:
  *   get:
  *     summary: Lista todas as configurações de sala
  *     tags: [Configurações de Sala]
@@ -198,7 +198,7 @@ router.get('/', configuracaoSalaController.getAllConfiguracoesSala);
 
 /**
  * @swagger
- * /api/configuracoes-sala/periodo:
+ * /configuracoes-sala/periodo:
  *   get:
  *     summary: Busca configurações por ano e semestre
  *     tags: [Configurações de Sala]
@@ -247,7 +247,7 @@ router.get('/periodo', configuracaoSalaController.getConfiguracoesByAnoSemestre)
 
 /**
  * @swagger
- * /api/configuracoes-sala/{id}:
+ * /configuracoes-sala/{id}:
  *   get:
  *     summary: Busca uma configuração específica por ID
  *     tags: [Configurações de Sala]
@@ -287,7 +287,7 @@ router.get('/:id', ConfiguracaoSalaController.validateId, configuracaoSalaContro
 
 /**
  * @swagger
- * /api/configuracoes-sala/sala/{salaId}:
+ * /configuracoes-sala/sala/{salaId}:
  *   get:
  *     summary: Busca configurações de uma sala específica
  *     tags: [Configurações de Sala]
@@ -327,7 +327,7 @@ router.get('/sala/:salaId', ConfiguracaoSalaController.validateId, configuracaoS
 
 /**
  * @swagger
- * /api/configuracoes-sala:
+ * /configuracoes-sala:
  *   post:
  *     summary: Cria uma nova configuração de sala
  *     tags: [Configurações de Sala]
@@ -368,7 +368,7 @@ router.post('/', ConfiguracaoSalaController.validateCreate, configuracaoSalaCont
 
 /**
  * @swagger
- * /api/configuracoes-sala/{id}:
+ * /configuracoes-sala/{id}:
  *   put:
  *     summary: Atualiza uma configuração existente
  *     tags: [Configurações de Sala]
@@ -418,7 +418,7 @@ router.put('/:id', ConfiguracaoSalaController.validateId, configuracaoSalaContro
 
 /**
  * @swagger
- * /api/configuracoes-sala/{id}:
+ * /configuracoes-sala/{id}:
  *   delete:
  *     summary: Remove uma configuração
  *     tags: [Configurações de Sala]

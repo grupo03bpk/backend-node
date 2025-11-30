@@ -4,3 +4,4 @@ export { Turma, TurnoEnum } from './Turma';
 export { Sala } from './Sala';
 export { ConfiguracaoSala, TipoSalaEnum, TamanhoSalaEnum } from './ConfiguracaoSala';
 export { Previsao } from './Previsao';
+export { ConfiguracaoPrevisao } from './ConfiguracaoPrevisao';

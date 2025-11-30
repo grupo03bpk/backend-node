@@ -39,5 +39,16 @@ else
   fi
 fi
 
+echo "Running seed..."
+if [ -f "dist/scripts/seed.js" ]; then
+  node dist/scripts/seed.js || true
+else
+  if command -v ts-node >/dev/null 2>&1; then
+    ts-node src/scripts/seed.ts || true
+  else
+    echo "ts-node not available; skipping seed."
+  fi
+fi
+
 echo "Starting app"
 exec "$@"

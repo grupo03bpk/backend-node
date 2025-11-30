@@ -17,25 +17,17 @@ services:
   app:
     build:
       context: .
-      args:
-        INSTALL_DEV: "true"
     depends_on:
       db:
         condition: service_healthy
-    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
-    command: ["npm", "start"]
     environment:
-      # Force internal service DNS name to avoid host env overriding to empty
       DB_HOST: db
       DB_PORT: ${DB_PORT:-5432}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
-      # App listen port inside the container (configurable)
       PORT: ${APP_PORT:-3000}
-      # Public port exposed on the host (only used for logs/URLs)
-      PUBLIC_PORT: ${HOST_PORT:-3000}
-      SWAGGER_DISABLED: "false"
+      NODE_ENV: production
     ports:
       - "${HOST_PORT:-3000}:${APP_PORT:-3000}"
 

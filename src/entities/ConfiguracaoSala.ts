@@ -12,9 +12,9 @@ import { Previsao } from './Previsao';
 import { Sala } from './Sala';
 
 export enum TamanhoSalaEnum {
-  P = 'P', // Pequena
-  M = 'M', // Média
-  G = 'G', // Grande
+  P = 'P',
+  M = 'M',
+  G = 'G',
 }
 
 export enum TipoSalaEnum {

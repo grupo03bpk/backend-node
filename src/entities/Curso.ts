@@ -17,13 +17,13 @@ export class Curso {
   nome: string;
 
   @Column({ type: 'int' })
-  duracao: number; // em semestres
+  duracao: number;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
-  evasao: number; // percentual médio de evasão
+  evasao: number;
 
   @OneToMany(() => Turma, (turma) => turma.curso, {
-    cascade: true, // Permite criar/atualizar/remover turmas junto com o curso
+    cascade: true,
   })
   turmas: Turma[];
 

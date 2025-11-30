@@ -19,7 +19,7 @@ export class Sala {
   @Column({ length: 10 })
   bloco: string;
 
-  @OneToMany(() => ConfiguracaoSala, (config) => config.sala)
+  @OneToMany(() => ConfiguracaoSala, (config) => config.sala, { cascade: ['remove'] })
   configuracoes: ConfiguracaoSala[];
 
   @CreateDateColumn()

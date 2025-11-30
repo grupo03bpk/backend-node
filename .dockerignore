@@ -1,6 +1,5 @@
 # existing excludes
 node_modules
-dist
 coverage
 
 # package / lock files (keep package.json but ignore local lock if you prefer)
@@ -27,7 +26,6 @@ tmp
 .cache
 
 # env / secrets
-.env
 .env.*.local
 *.pem
 *.key
@@ -45,7 +43,6 @@ Library/**/*
 
 # build / cache
 coverage
-dist
 node_modules/**
 
 # misc
