@@ -45,12 +45,12 @@ export class Turma {
   @JoinColumn({ name: 'cursoId' })
   curso: Curso;
 
-  @ManyToOne(() => Sala, { nullable: true })
+  @ManyToOne(() => Sala, { nullable: true, eager: false })
   @JoinColumn({ name: 'salaId' })
   sala: Sala;
 
   @Column({ nullable: true })
-  salaId: number;
+  salaId?: number;
 
   @OneToMany(() => Previsao, (previsao) => previsao.turma)
   previsoes: Previsao[];
