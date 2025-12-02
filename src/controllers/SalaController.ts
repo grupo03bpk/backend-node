@@ -75,7 +75,7 @@ export class SalaController {
     }
   };
 
-  // Middlewares de validação
+  
   static validateCreate = validateRequired(['numero', 'bloco']);
   static validateId = validateId;
 }

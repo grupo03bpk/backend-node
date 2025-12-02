@@ -165,10 +165,27 @@ async function seed() {
       { cursoId: cursosCreated[1].id, turno: TurnoEnum.NOITE, periodoAtual: 7, quantidadeAlunos: 61, ano: 2025 }
     ];
 
-    for (const turmaData of turmasData) {
-      await turmaRepo.create(turmaData);
+    // Associar turmas a salas conforme capacidade e exclusividade
+    for (let i = 0; i < turmasData.length; i++) {
+      const turmaData = turmasData[i];
+      // Encontrar uma sala disponível que comporte a turma
+      let salaAssociada = null;
+      for (const sala of salasCreated) {
+        // Buscar configuração vigente da sala
+        const config = await configRepo.findBySala(sala.id);
+        const configVigente = config[0];
+        if (configVigente && typeof configVigente.capacidade === 'number' && turmaData.quantidadeAlunos <= configVigente.capacidade) {
+          // Verificar se sala já está associada a outra turma
+          const turmasExistentes = await turmaRepo.findAll();
+          if (!turmasExistentes.some(t => t.salaId === sala.id)) {
+            salaAssociada = sala.id;
+            break;
+          }
+        }
+      }
+      await turmaRepo.create({ ...turmaData, salaId: salaAssociada ?? undefined });
     }
-    console.log('✅ Turmas criadas');
+    console.log('✅ Turmas criadas e associadas a salas quando possível');
 
     console.log('🎉 Seed completo! Dados iniciais inseridos com sucesso.');
     console.log('\n📋 Resumo dos dados criados:');

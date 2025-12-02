@@ -30,29 +30,53 @@ export interface AlocacaoStrategy {
     turmas: TurmaProcessada[],
     salas: SalaConfig[],
     capacidadePorTamanho: Record<string, number>,
-    areaPorAluno: number
-  ): AlocacaoResult;
+    areaPorAluno: number,
+    turmaRepository?: TurmaRepository,
+    ano?: number,
+    semestre?: number
+  ): Promise<AlocacaoResult>;
 }
 
 export class AlocacaoPadraoStrategy implements AlocacaoStrategy {
-  alocarTurmas(
+  async getTurmasComSalaAssociada(turmaRepository: TurmaRepository): Promise<{ [salaId: number]: any }> {
+    const turmas = await turmaRepository.findAll();
+    const ocupacao: { [salaId: number]: any } = {};
+    for (const turma of turmas) {
+      if (turma.salaId) {
+        ocupacao[turma.salaId] = turma;
+      }
+    }
+    return ocupacao;
+  }
+
+  async alocarTurmas(
     turmas: TurmaProcessada[],
     salas: SalaConfig[],
     capacidadePorTamanho: Record<string, number>,
-    areaPorAluno: number
-  ): AlocacaoResult {
+    areaPorAluno: number,
+    turmaRepository: TurmaRepository,
+    ano: number,
+    semestre: number
+  ): Promise<AlocacaoResult> {
     const alocacao: Array<{ turma: TurmaProcessada; sala: SalaConfig | null }> = [];
     const salasDisponiveis = [...salas];
     const resumoAlocacao: Array<{ sala: SalaConfig; turmasAlocadas: TurmaProcessada[] }> = salasDisponiveis.map(sala => ({ sala, turmasAlocadas: [] }));
     const turmasNaoAlocadas: Array<{ turma: TurmaProcessada; motivo: string }> = [];
     const novasSalasNecessarias: Record<string, number> = { P: 0, M: 0, G: 0 };
+    const ocupacaoAtual = await this.getTurmasComSalaAssociada(turmaRepository);
 
     for (const turma of turmas) {
       let salaAlocada: SalaConfig | null = null;
       for (const salaConfig of salasDisponiveis) {
         const capacidade = capacidadePorTamanho[salaConfig.tamanho];
         const areaTotal = capacidade * areaPorAluno;
+        const turmaOcupante = ocupacaoAtual[salaConfig.id];
+        let salaLivre = true;
+        if (turmaOcupante) {
+          salaLivre = turmaOcupante.periodoAtual === turmaOcupante.curso.duracao;
+        }
         if (
+          salaLivre &&
           turma.alunosPrevistos <= capacidade &&
           turma.alunosPrevistos * areaPorAluno <= areaTotal
         ) {
@@ -83,7 +107,6 @@ export class AlocacaoPadraoStrategy implements AlocacaoStrategy {
 
 export class PrevisaoExportAdapter {
   static toExcelFormat(previsao: { alocacao: Array<{ turma: TurmaProcessada; sala: SalaConfig | null }> }): Array<{ Turma: string | number; Sala: string; Alunos: number }> {
-    // Adapta o objeto para formato de planilha
     return previsao.alocacao.map((item: { turma: TurmaProcessada; sala: SalaConfig | null }) => ({
       Turma: item.turma.nome || item.turma.id,
       Sala: item.sala ? item.sala.numero || String(item.sala.id) : 'Não alocada',
@@ -150,15 +173,18 @@ export class PrevisaoAlocacaoService {
     turmasProcessadas = turmasProcessadas.filter((t: any) => !t.vaiFormar);
     turmasProcessadas.sort((a: any, b: any) => b.alunosPrevistos - a.alunosPrevistos);
 
-    const { alocacao, turmasNaoAlocadas, novasSalasNecessarias, resumoAlocacao } = this.alocacaoStrategy.alocarTurmas(
+    const { alocacao, turmasNaoAlocadas, novasSalasNecessarias, resumoAlocacao } = await this.alocacaoStrategy.alocarTurmas(
       turmasProcessadas,
       salas,
       capacidadePorTamanho,
-      areaPorAluno
+      areaPorAluno,
+      this.turmaRepository,
+      ano,
+      semestre
     );
 
     const novasSalasNecessariasArr = Object.entries(novasSalasNecessarias)
-      .filter(([_, qtd]) => qtd > 0)
+      .filter(([_, qtd]) => (qtd as number) > 0)
       .map(([tipo, quantidade]) => ({ tipo, quantidade }));
 
     return {
