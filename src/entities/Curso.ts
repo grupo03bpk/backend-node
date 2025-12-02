@@ -23,7 +23,7 @@ export class Curso {
   evasao: number;
 
   @OneToMany(() => Turma, (turma) => turma.curso, {
-    cascade: true,
+    cascade: false,
   })
   turmas: Turma[];
 
