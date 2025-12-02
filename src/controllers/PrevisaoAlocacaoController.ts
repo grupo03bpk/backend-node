@@ -45,16 +45,6 @@ export class PrevisaoAlocacaoController {
     }
   }
 
-  static async excluirPrevisao(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      await previsaoAlocacaoService.previsaoAlocacaoRepository.delete(Number(id));
-      return res.status(204).send();
-    } catch (error) {
-      return res.status(500).json({ erro: 'Erro ao excluir previsão', detalhes: error.message });
-    }
-  }
-
   static validateCreate = validateRequired(['nome', 'dados']);
   static validateId = validateId;
 }
