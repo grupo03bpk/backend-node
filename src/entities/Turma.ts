@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Curso } from './Curso';
 import { Previsao } from './Previsao';
+import { Sala } from './Sala';
 
 export enum TurnoEnum {
   MANHA = 'manha',
@@ -43,6 +44,13 @@ export class Turma {
   @ManyToOne(() => Curso, (curso) => curso.turmas)
   @JoinColumn({ name: 'cursoId' })
   curso: Curso;
+
+  @ManyToOne(() => Sala, { nullable: true })
+  @JoinColumn({ name: 'salaId' })
+  sala: Sala;
+
+  @Column({ nullable: true })
+  salaId: number;
 
   @OneToMany(() => Previsao, (previsao) => previsao.turma)
   previsoes: Previsao[];

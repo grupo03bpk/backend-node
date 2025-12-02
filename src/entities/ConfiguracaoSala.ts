@@ -48,6 +48,9 @@ export class ConfiguracaoSala {
   })
   tipo: TipoSalaEnum;
 
+  @Column({ type: 'int' })
+  capacidade: number;
+
   @ManyToOne(() => Sala, (sala) => sala.configuracoes)
   @JoinColumn({ name: 'salaId' })
   sala: Sala;

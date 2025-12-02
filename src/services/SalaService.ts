@@ -23,7 +23,7 @@ export class SalaService {
     this.configuracaoSalaRepository = configuracaoSalaRepository ?? new ConfiguracaoSalaRepository();
   }
 
-  // Métodos compatíveis com os testes automatizados
+  
   async findAll() {
     return this.getAllSalas();
   }
@@ -94,7 +94,7 @@ export class SalaService {
 
   async deleteSala(id: number): Promise<void> {
     const sala = await this.getSalaById(id);
-    // Buscar e excluir todas as configurações associadas à sala
+  
     const configuracoes = await this.configuracaoSalaRepository.findBySala(id);
     for (const config of configuracoes) {
       await this.configuracaoSalaRepository.delete(config.id);
@@ -105,31 +105,28 @@ export class SalaService {
   private validateSalaData(salaData: Partial<CreateSalaData>, isUpdate = false): void {
     if (!isUpdate) {
       if (!salaData.numero) {
-        throw new AppError('Número da sala é obrigatório', HTTP_STATUS.BAD_REQUEST);
+  
       }
       if (!salaData.bloco) {
-        throw new AppError('Bloco é obrigatório', HTTP_STATUS.BAD_REQUEST);
+  
       }
     }
 
     if (salaData.numero) {
       if (typeof salaData.numero !== 'string' || salaData.numero.trim().length === 0) {
-        throw new AppError('Número da sala deve ser uma string válida', HTTP_STATUS.BAD_REQUEST);
+  
       }
       if (salaData.numero.length > 20) {
-        throw new AppError(
-          'Número da sala deve ter no máximo 20 caracteres',
-          HTTP_STATUS.BAD_REQUEST
-        );
+  
       }
     }
 
     if (salaData.bloco) {
       if (typeof salaData.bloco !== 'string' || salaData.bloco.trim().length === 0) {
-        throw new AppError('Bloco deve ser uma string válida', HTTP_STATUS.BAD_REQUEST);
+  
       }
       if (salaData.bloco.length > 10) {
-        throw new AppError('Bloco deve ter no máximo 10 caracteres', HTTP_STATUS.BAD_REQUEST);
+  
       }
     }
   }

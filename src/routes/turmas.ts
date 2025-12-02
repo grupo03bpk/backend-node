@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { TurmaController } from '../controllers';
+import { TurmaController } from '../controllers/TurmaController';
 import { authenticateToken, requireAdmin } from '../middlewares';
 
 const router = Router();
@@ -74,6 +74,7 @@ router.get('/:id', TurmaController.validateId, turmaController.getTurmaById);
  *               - periodoAtual
  *               - quantidadeAlunos
  *               - ano
+ *               - salaId
  *             properties:
  *               cursoId:
  *                 type: integer
@@ -86,12 +87,15 @@ router.get('/:id', TurmaController.validateId, turmaController.getTurmaById);
  *                 type: integer
  *               ano:
  *                 type: integer
+ *               salaId:
+ *                 type: integer
  *           example:
  *             cursoId: 5
  *             turno: "manha"
  *             periodoAtual: 1
  *             quantidadeAlunos: 40
  *             ano: 2026
+ *             salaId: 1
  *     responses:
  *       201:
  *         description: Turma criada com sucesso
@@ -130,6 +134,8 @@ router.post('/', requireAdmin, TurmaController.validateCreate, turmaController.c
  *                 type: integer
  *               ano:
  *                 type: integer
+ *               salaId:
+ *                 type: integer
  *     responses:
  *       200:
  *         description: Turma atualizada com sucesso
@@ -155,5 +161,34 @@ router.put('/:id', requireAdmin, TurmaController.validateId, turmaController.upd
  *         description: Turma deletada com sucesso
  */
 router.delete('/:id', requireAdmin, TurmaController.validateId, turmaController.deleteTurma);
+
+/**
+ * @swagger
+ * /turmas/{id}/associar-sala:
+ *   post:
+ *     summary: Associar sala à turma
+ *     tags: [Turmas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               salaId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Sala associada com sucesso
+ */
+router.post('/associar-sala', TurmaController.prototype.associarSala);
 
 export default router;
