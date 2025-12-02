@@ -21,4 +21,8 @@ export class PrevisaoAlocacaoRepository {
     const previsao = this.repository.create(data);
     return this.repository.save(previsao);
   }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

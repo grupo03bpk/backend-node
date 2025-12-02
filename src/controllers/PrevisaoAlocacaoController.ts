@@ -45,13 +45,18 @@ export class PrevisaoAlocacaoController {
     }
   }
 
-  static async excluirPrevisao(req: Request, res: Response): Promise<void> {
+  static async excluirPrevisao(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      await previsaoAlocacaoService.previsaoAlocacaoRepository.delete(Number(id));
-      return res.status(204).send();
-    } catch (error) {
-      return res.status(500).json({ erro: 'Erro ao excluir previsão', detalhes: error.message });
+      const previsao = await PrevisaoAlocacaoController.previsaoAlocacaoService.buscarPrevisaoPorId(parseInt(id));
+      if (!previsao) {
+        sendError(res, 'Previsão não encontrada', HTTP_STATUS.NOT_FOUND);
+        return;
+      }
+      await PrevisaoAlocacaoController.previsaoAlocacaoService.deletePrevisao(parseInt(id));
+      sendSuccess(res, null, 'Previsão excluída com sucesso', HTTP_STATUS.NO_CONTENT);
+    } catch (error: any) {
+      sendError(res, error.message, error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 

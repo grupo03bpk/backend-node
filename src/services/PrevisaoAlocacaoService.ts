@@ -191,4 +191,8 @@ export class PrevisaoAlocacaoService {
     }
     return previsao;
   }
+
+  async deletePrevisao(id: number): Promise<void> {
+    await this.previsaoAlocacaoRepository.delete(id);
+  }
 }
