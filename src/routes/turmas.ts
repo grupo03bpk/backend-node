@@ -189,6 +189,6 @@ router.delete('/:id', requireAdmin, TurmaController.validateId, turmaController.
  *       200:
  *         description: Sala associada com sucesso
  */
-router.post('/associar-sala', TurmaController.prototype.associarSala);
+router.post('/associar-sala', turmaController.associarSala);
 
 export default router;

@@ -2,6 +2,7 @@ import { ConfiguracaoSala, TamanhoSalaEnum, TipoSalaEnum } from '../entities';
 import { AppError } from '../middlewares';
 import { ConfiguracaoSalaRepository } from '../repositories';
 import { HTTP_STATUS } from '../utils/constants';
+import { ConfiguracaoPrevisaoRepository } from '../repositories/ConfiguracaoPrevisaoRepository';
 
 export interface CreateConfiguracaoSalaData {
   salaId: number;
@@ -9,6 +10,7 @@ export interface CreateConfiguracaoSalaData {
   semestre: number;
   tamanho: TamanhoSalaEnum;
   tipo: TipoSalaEnum;
+  capacidade?: number;
 }
 
 export interface UpdateConfiguracaoSalaData {
@@ -17,14 +19,21 @@ export interface UpdateConfiguracaoSalaData {
   semestre?: number;
   tamanho?: TamanhoSalaEnum;
   tipo?: TipoSalaEnum;
+  capacidade?: number;
 }
 
 export class ConfiguracaoSalaService {
   private configuracaoSalaRepository: ConfiguracaoSalaRepository;
+  private configuracaoPrevisaoRepository: ConfiguracaoPrevisaoRepository;
 
-  constructor(configuracaoSalaRepository?: ConfiguracaoSalaRepository) {
+  constructor(
+    configuracaoSalaRepository?: ConfiguracaoSalaRepository,
+    configuracaoPrevisaoRepository?: ConfiguracaoPrevisaoRepository
+  ) {
     this.configuracaoSalaRepository =
       configuracaoSalaRepository ?? new ConfiguracaoSalaRepository();
+    this.configuracaoPrevisaoRepository =
+      configuracaoPrevisaoRepository ?? new ConfiguracaoPrevisaoRepository();
   }
 
   // Métodos compatíveis com os testes automatizados
@@ -77,6 +86,27 @@ export class ConfiguracaoSalaService {
   ): Promise<ConfiguracaoSala> {
     this.validateConfiguracaoSalaData(configuracaoData);
 
+    // Buscar configuração de previsão mais recente
+    const previsoes = await this.configuracaoPrevisaoRepository.findAll();
+    const previsao = previsoes[0];
+
+    // Preencher capacidade conforme tamanho, se não informado
+    if (!('capacidade' in configuracaoData) || configuracaoData.capacidade == null) {
+      if (previsao) {
+        switch (configuracaoData.tamanho) {
+          case TamanhoSalaEnum.P:
+            configuracaoData.capacidade = previsao.capacidadeSalaP;
+            break;
+          case TamanhoSalaEnum.M:
+            configuracaoData.capacidade = previsao.capacidadeSalaM;
+            break;
+          case TamanhoSalaEnum.G:
+            configuracaoData.capacidade = previsao.capacidadeSalaG;
+            break;
+        }
+      }
+    }
+
     // Verificar se já existe configuração para a mesma sala, ano e semestre
     const existingConfiguracao = await this.configuracaoSalaRepository.findBySalaAnoSemestre(
       configuracaoData.salaId,
@@ -100,6 +130,27 @@ export class ConfiguracaoSalaService {
   ): Promise<ConfiguracaoSala> {
     await this.getConfiguracaoSalaById(id);
 
+    // Buscar configuração de previsão mais recente
+    const previsoes = await this.configuracaoPrevisaoRepository.findAll();
+    const previsao = previsoes[0];
+
+    // Preencher capacidade conforme tamanho, se não informado
+    if (!('capacidade' in configuracaoData) || configuracaoData.capacidade == null) {
+      if (previsao && configuracaoData.tamanho) {
+        switch (configuracaoData.tamanho) {
+          case TamanhoSalaEnum.P:
+            configuracaoData.capacidade = previsao.capacidadeSalaP;
+            break;
+          case TamanhoSalaEnum.M:
+            configuracaoData.capacidade = previsao.capacidadeSalaM;
+            break;
+          case TamanhoSalaEnum.G:
+            configuracaoData.capacidade = previsao.capacidadeSalaG;
+            break;
+        }
+      }
+    }
+
     // Se está atualizando sala, ano ou semestre, verificar conflitos
     if (configuracaoData.salaId || configuracaoData.ano || configuracaoData.semestre) {
       const currentConfig = await this.getConfiguracaoSalaById(id);
@@ -121,13 +172,9 @@ export class ConfiguracaoSalaService {
       }
     }
 
-    this.validateConfiguracaoSalaData(configuracaoData, true);
     const updatedConfiguracao = await this.configuracaoSalaRepository.update(id, configuracaoData);
     if (!updatedConfiguracao) {
-      throw new AppError(
-        'Erro ao atualizar configuração de sala',
-        HTTP_STATUS.INTERNAL_SERVER_ERROR
-      );
+      throw new AppError('Erro ao atualizar configuração de sala', HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
     return updatedConfiguracao;
   }
