@@ -1,6 +1,7 @@
 import { Sala } from '../entities';
 import { AppError } from '../middlewares';
 import { SalaRepository } from '../repositories';
+import { ConfiguracaoSalaRepository } from '../repositories/ConfiguracaoSalaRepository';
 import { HTTP_STATUS } from '../utils/constants';
 
 export interface CreateSalaData {
@@ -15,9 +16,11 @@ export interface UpdateSalaData {
 
 export class SalaService {
   private salaRepository: SalaRepository;
+  private configuracaoSalaRepository: ConfiguracaoSalaRepository;
 
-  constructor(salaRepository?: SalaRepository) {
+  constructor(salaRepository?: SalaRepository, configuracaoSalaRepository?: ConfiguracaoSalaRepository) {
     this.salaRepository = salaRepository ?? new SalaRepository();
+    this.configuracaoSalaRepository = configuracaoSalaRepository ?? new ConfiguracaoSalaRepository();
   }
 
   // Métodos compatíveis com os testes automatizados
@@ -91,15 +94,11 @@ export class SalaService {
 
   async deleteSala(id: number): Promise<void> {
     const sala = await this.getSalaById(id);
-
-    // Verificar se a sala tem configurações associadas
-    if (sala.configuracoes && sala.configuracoes.length > 0) {
-      throw new AppError(
-        'Não é possível deletar sala com configurações associadas',
-        HTTP_STATUS.BAD_REQUEST
-      );
+    // Buscar e excluir todas as configurações associadas à sala
+    const configuracoes = await this.configuracaoSalaRepository.findBySala(id);
+    for (const config of configuracoes) {
+      await this.configuracaoSalaRepository.delete(config.id);
     }
-
     await this.salaRepository.delete(id);
   }
 
