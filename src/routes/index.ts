@@ -7,6 +7,7 @@ import previsaoRoutes from './previsoes';
 import { Router } from 'express';
 import authRoutes from './auth';
 import userRoutes from './users';
+import { PrevisaoAlocacaoController } from '../controllers/PrevisaoAlocacaoController';
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.use('/salas', salaRoutes);
 router.use('/configuracoes-sala', configuracaoSalaRoutes);
 router.use('/configuracoes-previsao', configuracaoPrevisaoRoutes);
 router.use('/previsoes', previsaoRoutes);
+router.delete('/previsoes/:id', PrevisaoAlocacaoController.excluirPrevisao);
 
 router.get('/health', (req, res) => {
   res.json({
